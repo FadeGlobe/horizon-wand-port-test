@@ -1,0 +1,367 @@
+[mod]
+id = "godwand"
+version = "1.4.2"
+priority = 100
+
+# Raw targets are exact functions of one Horizon commit: build on that commit.
+[compatibility]
+horizon_revision = "a46ce6898bd72016e061aaec1afc1375b384deac"
+
+[[module]]
+id = "runtime"
+file = "crates/horizon-client/src/game.rs"
+name = "port_godwand"
+source = "runtime.rs"
+
+[[module]]
+id = "game_side"
+file = "crates/horizon-client/src/game.rs"
+name = "port_godwand_game"
+source = "game_side.rs"
+
+[[injection]]
+id = "list"
+kind = "HEAD"
+target = "horizon_client::game::native_hooks::Game<'_>::native_mods"
+helper = "list.rs"
+bindings = [
+  { name = "mods", ty = "&mut Vec<crate::game::native_hooks::NativeMod>", value = "&mut *mods" },
+]
+
+[[injection]]
+id = "command"
+kind = "HEAD"
+target = "horizon_client::game::native_hooks::Game<'_>::native_command"
+helper = "command.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+  { name = "command", ty = "&str", value = "command" },
+  { name = "ran", ty = "&mut bool", value = "&mut *ran" },
+]
+
+[[injection]]
+id = "tick"
+kind = "HEAD"
+target = "horizon_client::game::native_hooks::Game<'_>::native_tick"
+helper = "tick.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+]
+
+[[injection]]
+id = "key"
+kind = "HEAD"
+target = "horizon_client::game::native_hooks::Game<'_>::native_key"
+helper = "key.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+  { name = "key", ty = "&str", value = "key" },
+  { name = "pressed", ty = "bool", value = "pressed" },
+]
+
+[[injection]]
+id = "hud"
+kind = "HEAD"
+target = "horizon_client::game::native_hooks::Game<'_>::native_hud"
+helper = "hud.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+  { name = "batch", ty = "&mut horizon_client::hud::HudBatch", value = "&mut *batch" },
+  { name = "corners", ty = "&mut horizon_client::extras_hud::Corners", value = "&mut *corners" },
+]
+
+[[injection]]
+id = "frame"
+kind = "HEAD"
+target = "horizon_client::game::native_hooks::Game<'_>::native_frame"
+helper = "frame.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+  { name = "elapsed", ty = "std::time::Duration", value = "elapsed" },
+]
+
+[[injection]]
+id = "settings"
+kind = "HEAD"
+target = "horizon_client::game::native_hooks::Game<'_>::native_settings"
+helper = "settings.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+  { name = "mod_id", ty = "&str", value = "mod_id" },
+  { name = "buttons", ty = "&mut Vec<String>", value = "&mut *buttons" },
+]
+
+[[injection]]
+id = "click"
+kind = "HEAD"
+target = "horizon_client::game::native_hooks::Game<'_>::native_settings_click"
+helper = "click.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+  { name = "mod_id", ty = "&str", value = "mod_id" },
+  { name = "button", ty = "usize", value = "button" },
+]
+
+# Off: @Inject(INVOKE) on Camera.update (AtomicCameraMixin.godwand$atomicCamera)
+#   No Horizon function mapped for Camera.update (run `match`, or map it in a --mappings file).
+# [[injection]]
+# id = "atomic-camera-mixin-atomic-camera"
+# kind = "AFTER_CALL"
+# target = "TODO"
+
+[[injection]]
+id = "atomic-camera-mixin-dynamic-fov"
+kind = "RETURN"
+target = "horizon_client_render::camera::Camera::calculate_fov"
+helper = "atomic-camera-mixin-dynamic-fov.rs"
+bindings = [
+  { name = "value", ty = "f32", value = "$value" },
+]
+
+# Off: @Inject(TAIL) on LivingEntityRenderer.setupRotations (AtomicFacingMixin.godwand$face)
+#   No Horizon function mapped for LivingEntityRenderer.setupRotations (run `match`, or map it in a --mappings file).
+# [[injection]]
+# id = "atomic-facing-mixin-face"
+# kind = "RETURN"
+# target = "TODO"
+
+# Off: @Inject(HEAD) on Hud.extractCrosshair (AtomicGuiMixin.godwand$atomicHideCrosshair)
+#   No Horizon function mapped for Hud.extractCrosshair (run `match`, or map it in a --mappings file).
+# [[injection]]
+# id = "atomic-gui-mixin-atomic-hide-crosshair"
+# kind = "HEAD"
+# target = "TODO"
+
+# Off: @Inject(HEAD) on Hud.extractHotbarAndDecorations (AtomicGuiMixin.godwand$atomicHideCrosshair)
+#   No Horizon function mapped for Hud.extractHotbarAndDecorations (run `match`, or map it in a --mappings file).
+# [[injection]]
+# id = "atomic-gui-mixin-atomic-hide-crosshair-2"
+# kind = "HEAD"
+# target = "TODO"
+
+# Off: @Inject(HEAD) on Hud.extractChat (AtomicGuiMixin.godwand$atomicHideCrosshair)
+#   No Horizon function mapped for Hud.extractChat (run `match`, or map it in a --mappings file).
+# [[injection]]
+# id = "atomic-gui-mixin-atomic-hide-crosshair-3"
+# kind = "HEAD"
+# target = "TODO"
+
+# Off: @Inject(HEAD) on Hud.extractScoreboardSidebar (AtomicGuiMixin.godwand$atomicHideCrosshair)
+#   No Horizon function mapped for Hud.extractScoreboardSidebar (run `match`, or map it in a --mappings file).
+# [[injection]]
+# id = "atomic-gui-mixin-atomic-hide-crosshair-4"
+# kind = "HEAD"
+# target = "TODO"
+
+# Off: @Inject(HEAD) on Hud.extractTabList (AtomicGuiMixin.godwand$atomicHideCrosshair)
+#   No Horizon function mapped for Hud.extractTabList (run `match`, or map it in a --mappings file).
+# [[injection]]
+# id = "atomic-gui-mixin-atomic-hide-crosshair-5"
+# kind = "HEAD"
+# target = "TODO"
+
+# Off: @Inject(HEAD) on Hud.extractEffects (AtomicGuiMixin.godwand$atomicHideCrosshair)
+#   No Horizon function mapped for Hud.extractEffects (run `match`, or map it in a --mappings file).
+# [[injection]]
+# id = "atomic-gui-mixin-atomic-hide-crosshair-6"
+# kind = "HEAD"
+# target = "TODO"
+
+# Off: @Inject(HEAD) on Hud.extractOverlayMessage (AtomicGuiMixin.godwand$atomicHideCrosshair)
+#   No Horizon function mapped for Hud.extractOverlayMessage (run `match`, or map it in a --mappings file).
+# [[injection]]
+# id = "atomic-gui-mixin-atomic-hide-crosshair-7"
+# kind = "HEAD"
+# target = "TODO"
+
+# Off: @Inject(HEAD) on Hud.extractTitle (AtomicGuiMixin.godwand$atomicHideCrosshair)
+#   No Horizon function mapped for Hud.extractTitle (run `match`, or map it in a --mappings file).
+# [[injection]]
+# id = "atomic-gui-mixin-atomic-hide-crosshair-8"
+# kind = "HEAD"
+# target = "TODO"
+
+# Off: @Inject(TAIL) on KeyboardInput.tick (AtomicInputMixin.godwand$atomicInput)
+#   No Horizon function mapped for KeyboardInput.tick (run `match`, or map it in a --mappings file).
+# [[injection]]
+# id = "atomic-input-mixin-atomic-input"
+# kind = "RETURN"
+# target = "TODO"
+
+# Off: @Inject(HEAD) on Entity.move (AtomicLocalMovementMixin.godwand$atomicStill)
+#   No Horizon function mapped for Entity.move (run `match`, or map it in a --mappings file).
+# [[injection]]
+# id = "atomic-local-movement-mixin-atomic-still"
+# kind = "HEAD"
+# target = "TODO"
+
+[[injection]]
+id = "atomic-local-movement-mixin-fuga-facing"
+kind = "HEAD"
+target = "horizon_client_input::mouse::Rotation::turn"
+cancellable = true
+helper = "atomic-local-movement-mixin-fuga-facing.rs"
+bindings = [
+  { name = "this", ty = "&mut Rotation", value = "&mut *self" },
+  { name = "xo", ty = "f64", value = "xo" },
+  { name = "yo", ty = "f64", value = "yo" },
+]
+
+# Off: @Inject(INVOKE) on ServerGamePacketListenerImpl.handleMovePlayer (AtomicMovementMixin.godwand$atomicAnchor)
+#   No Horizon function mapped for ServerGamePacketListenerImpl.handleMovePlayer (run `match`, or map it in a --mappings file).
+# [[injection]]
+# id = "atomic-movement-mixin-atomic-anchor"
+# kind = "AFTER_CALL"
+# target = "TODO"
+
+# Off: @Inject(TAIL) on HumanoidMobRenderer.extractHumanoidRenderState (AtomicPoseCaptureMixin.godwand$extractAtomicPose)
+#   No Horizon function mapped for HumanoidMobRenderer.extractHumanoidRenderState (run `match`, or map it in a --mappings file).
+# [[injection]]
+# id = "atomic-pose-capture-mixin-extract-atomic-pose"
+# kind = "RETURN"
+# target = "TODO"
+
+# Off: @Inject(TAIL) on HumanoidModel.setupAnim (AtomicPoseMixin.godwand$raiseWand)
+#   No Horizon function mapped for HumanoidModel.setupAnim (run `match`, or map it in a --mappings file).
+# [[injection]]
+# id = "atomic-pose-mixin-raise-wand"
+# kind = "RETURN"
+# target = "TODO"
+
+# Off: @Inject(HEAD) on ToastManager.extractRenderState (AtomicToastMixin.godwand$atomicDeferToasts)
+#   No Horizon function mapped for ToastManager.extractRenderState (run `match`, or map it in a --mappings file).
+# [[injection]]
+# id = "atomic-toast-mixin-atomic-defer-toasts"
+# kind = "HEAD"
+# target = "TODO"
+
+# Off: @Inject(HEAD) on Display.tick (DisplayLifecycleMixin.godwand$reattachDisplacedDisplay)
+#   No Horizon function mapped for Display.tick (run `match`, or map it in a --mappings file).
+# [[injection]]
+# id = "display-lifecycle-mixin-reattach-displaced-display"
+# kind = "HEAD"
+# target = "TODO"
+
+# Off: @Inject(HEAD) on Entity.isInvulnerableToBase (EntityMixin.godwand$atomicProtection)
+#   No Horizon function mapped for Entity.isInvulnerableToBase (run `match`, or map it in a --mappings file).
+# [[injection]]
+# id = "entity-mixin-atomic-protection"
+# kind = "HEAD"
+# target = "TODO"
+
+# Off: @Inject(HEAD) on Entity.isCurrentlyGlowing (EntityMixin.godwand$preventDisplacedIsGlowing)
+#   No Horizon function mapped for Entity.isCurrentlyGlowing (run `match`, or map it in a --mappings file).
+# [[injection]]
+# id = "entity-mixin-prevent-displaced-is-glowing"
+# kind = "HEAD"
+# target = "TODO"
+
+# Off: @Inject(HEAD) on Entity.hasGlowingTag (EntityMixin.godwand$preventDisplacedHasGlowingTag)
+#   No Horizon function mapped for Entity.hasGlowingTag (run `match`, or map it in a --mappings file).
+# [[injection]]
+# id = "entity-mixin-prevent-displaced-has-glowing-tag"
+# kind = "HEAD"
+# target = "TODO"
+
+# Off: @Accessor on ExperienceOrb.count (ExperienceOrbAccessor.godwand$getCount)
+#   No Horizon function mapped for ExperienceOrb.count (run `match`, or map it in a --mappings file).
+# [[injection]]
+# id = "experience-orb-accessor-get-count"
+# kind = "GET"
+# target = "TODO"
+
+# Off: @Inject(HEAD) on FlowingFluid.canPassThrough (FlowableFluidMixin.godwand$flow)
+#   No Horizon function mapped for FlowingFluid.canPassThrough (run `match`, or map it in a --mappings file).
+# [[injection]]
+# id = "flowable-fluid-mixin-flow"
+# kind = "HEAD"
+# target = "TODO"
+
+# Off: @Inject(HEAD) on FlowingFluid.canMaybePassThrough (FlowableFluidMixin.godwand$down)
+#   No Horizon function mapped for FlowingFluid.canMaybePassThrough (run `match`, or map it in a --mappings file).
+# [[injection]]
+# id = "flowable-fluid-mixin-down"
+# kind = "HEAD"
+# target = "TODO"
+
+[[injection]]
+id = "flowable-fluid-mixin-destination"
+kind = "HEAD"
+target = "horizon_world::level::fluids::Sim<'_, L>::spread_to"
+cancellable = true
+helper = "flowable-fluid-mixin-destination.rs"
+bindings = [
+  { name = "this", ty = "&mut Sim<'_, L>", value = "&mut *self" },
+  { name = "kind", ty = "&FluidKind", value = "&kind" },
+  { name = "pos", ty = "&BlockPos", value = "&pos" },
+  { name = "state", ty = "&BlockStateId", value = "&state" },
+  { name = "direction", ty = "&Direction", value = "&direction" },
+  { name = "target", ty = "&FluidState", value = "&target" },
+]
+
+# Off: @ModifyArg(INVOKE) on GameRenderer.renderLevel (GameRendererMixin.godwand$captureProjection)
+#   No Horizon function mapped for GameRenderer.renderLevel (run `match`, or map it in a --mappings file).
+# [[injection]]
+# id = "game-renderer-mixin-capture-projection"
+# kind = "MODIFY_ARG"
+# target = "TODO"
+
+# Off: @Inject(INVOKE) on GameRenderer.renderLevel (GameRendererMixin.godwand$afterWorldComposite)
+#   No Horizon function mapped for GameRenderer.renderLevel (run `match`, or map it in a --mappings file).
+# [[injection]]
+# id = "game-renderer-mixin-after-world-composite"
+# kind = "BEFORE_CALL"
+# target = "TODO"
+
+[[injection]]
+id = "game-renderer-mixin-apply-screen-shake"
+kind = "HEAD"
+target = "horizon_client_render::camera::bob_hurt"
+helper = "game-renderer-mixin-apply-screen-shake.rs"
+bindings = [
+  { name = "state", ty = "&BobState", value = "state" },
+  { name = "damage_tilt_strength", ty = "f64", value = "damage_tilt_strength" },
+  { name = "pose", ty = "&mut Mat4", value = "&mut *pose" },
+]
+
+# Off: @Inject(HEAD) on GameRenderer.renderItemInHand (GameRendererMixin.godwand$atomicHideHand)
+#   No Horizon function mapped for GameRenderer.renderItemInHand (run `match`, or map it in a --mappings file).
+# [[injection]]
+# id = "game-renderer-mixin-atomic-hide-hand"
+# kind = "HEAD"
+# target = "TODO"
+
+# Off: @Inject(HEAD) on Minecraft.shouldEntityAppearGlowing (MinecraftClientMixin.godwand$suppressBlockDisplayOutline)
+#   No Horizon function mapped for Minecraft.shouldEntityAppearGlowing (run `match`, or map it in a --mappings file).
+# [[injection]]
+# id = "minecraft-client-mixin-suppress-block-display-outline"
+# kind = "HEAD"
+# target = "TODO"
+
+# Off: @Accessor on PostChain.passes (PostEffectProcessorAccessor.getPasses)
+#   No Horizon function mapped for PostChain.passes (run `match`, or map it in a --mappings file).
+# [[injection]]
+# id = "post-effect-processor-accessor-get-passes"
+# kind = "GET"
+# target = "TODO"
+
+# Off: @Accessor on PostPass.customUniforms (PostPassUniformsAccessor.godwand$uniforms)
+#   No Horizon function mapped for PostPass.customUniforms (run `match`, or map it in a --mappings file).
+# [[injection]]
+# id = "post-pass-uniforms-accessor-uniforms"
+# kind = "GET"
+# target = "TODO"
+
+# Off: @Inject(HEAD) on MultiPlayerGameMode.useItem (SkillCooldownUseMixin.godwand$skillCooldown)
+#   No Horizon function mapped for MultiPlayerGameMode.useItem (run `match`, or map it in a --mappings file).
+# [[injection]]
+# id = "skill-cooldown-use-mixin-skill-cooldown"
+# kind = "HEAD"
+# target = "TODO"
+
+# Off: @Inject(RETURN) on SoundEngine.calculateVolume (SoundSystemMixin.godwand$applyVacuumSilence)
+#   No Horizon function mapped for SoundEngine.calculateVolume (run `match`, or map it in a --mappings file).
+# [[injection]]
+# id = "sound-system-mixin-apply-vacuum-silence"
+# kind = "RETURN"
+# target = "TODO"

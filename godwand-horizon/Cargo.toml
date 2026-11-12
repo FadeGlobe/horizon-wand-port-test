@@ -1,0 +1,10 @@
+[package]
+name = "horizon-mod-godwand"
+version = "1.4.2"
+edition = "2024"
+publish = false
+description = "God Wand, ported from Fabric to a Horizon native mod by horizon-port."
+
+# The mod's logic and its tests: the same file the bundle adds to the game.
+[lib]
+path = "mixins/godwand/runtime.rs"
